@@ -1,13 +1,12 @@
 // ---- Offline-first service worker for Detergent Tool (merged UI) ----
-const CACHE_VERSION = 'v1.2.3'; // bump on each release
+const CACHE_VERSION = 'v1.1.0'; // bump on each release
 const CACHE_NAME = `detergent-tool-${CACHE_VERSION}`;
 
 const APP_SHELL = [
   './detergent-concentration.html',
   './manifest.webmanifest',
   './icons/icon-192.png',
-  './icons/icon-512.png',
-  './products.json'
+  './icons/icon-512.png'
 ];
 
 self.addEventListener('install', (event) => {
