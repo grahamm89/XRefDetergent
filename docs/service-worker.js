@@ -1,5 +1,5 @@
 // ---- Offline-first service worker for Detergent Tool (merged UI) ----
-const CACHE_VERSION = 'v1.2.4'; // bump on each release
+const CACHE_VERSION = 'v1.2.6'; // bump on each release
 const CACHE_NAME = `detergent-tool-${CACHE_VERSION}`;
 
 const APP_SHELL = [
