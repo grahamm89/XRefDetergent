@@ -101,107 +101,37 @@ button.primary{background:var(--accent);color:#fff;border:none;font-weight:600}
 @media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
 :focus-visible{outline:3px solid rgba(10,132,255,.4);outline-offset:2px;border-radius:10px}
 </style>
-<style id="desktop-dropdown-and-table-fix">
-  /* 1) Ensure product dropdown is visible on desktop too */
-  #productSelectWrap,
-  #productSelect {
-    display: block !important;
-    visibility: visible !important;
-  }
-  @media (min-width: 768px) {
-    #productSelectWrap { max-width: 420px; }
-  }
-
-  /* 2) Make #resultTable readable */
-  .table-wrap {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    border-radius: 12px;
-  }
-
-  #resultTable {
-    width: 100%;
-    border-collapse: collapse;
-    background: #ffffff;
-    color: #111;
-    font-size: 16px;
-    border: 1px solid #e6e8eb;
-    border-radius: 12px;
-    overflow: hidden;
-  }
-
-  #resultTable thead {
-    background: #f3f4f6;
-    color: #111;
-  }
-
-  #resultTable th,
-  #resultTable td {
-    padding: 10px 12px;
-    border-bottom: 1px solid #eceff1;
-    text-align: center;
-    white-space: nowrap;
-  }
-
-  #resultTable tbody td:first-child {
-    font-weight: 600;
-    text-align: left;
-  }
-
-  #resultTable tbody tr:nth-child(odd) {
-    background: #fafbfc;
-  }
-
-  #resultTable th.is-active,
-  #resultTable td.is-active {
-    background: #e7f0ff;
-    outline: 2px solid #cfe3ff;
-  }
-
-  #resultTable :where(th, td):focus-within {
-    outline: 3px solid rgba(10,132,255,.4);
-    outline-offset: -3px;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    #resultTable { background: #15171a; color: #e9edf1; border-color: #2a2f35; }
-    #resultTable thead { background: #1f2327; color: #e9edf1; }
-    #resultTable th, #resultTable td { border-bottom-color: #2a2f35; }
-    #resultTable tbody tr:nth-child(odd) { background: #181b1f; }
-    #resultTable th.is-active, #resultTable td.is-active { background: #0f274a; outline-color: #214a86; }
-  }
-</style>
 
 
-<style id="patch-table-and-dropdown">
+
+<style id="strict-white-table">
+  /* Show dropdown on all devices */
   #productSelectWrap, #productSelect { display:block !important; visibility:visible !important; }
-  @media (min-width: 768px) { #productSelectWrap { max-width: 420px; } }
 
-  .table-wrap { overflow-x:auto; -webkit-overflow-scrolling:touch; border-radius:12px; }
-
-  #resultTable {
-    width:100%; border-collapse:collapse;
-    background:#fff; color:#111; font-size:16px;
-    border:1px solid #e6e8eb; border-radius:12px; overflow:hidden;
+  /* Strict black text on white background for the concentration table */
+  table#resultTable,
+  table#resultTable thead,
+  table#resultTable tbody,
+  table#resultTable tr,
+  table#resultTable th,
+  table#resultTable td {
+    background: #ffffff !important;
+    color: #000000 !important;
+    border-color: #000000 !important;
   }
-  #resultTable thead { background:#f3f4f6; color:#111; }
-  #resultTable th, #resultTable td {
-    padding:10px 12px; border-bottom:1px solid #eceff1; text-align:center; white-space:nowrap;
+  table#resultTable {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    border: 1px solid #000000 !important;
   }
-  #resultTable tbody td:first-child { font-weight:600; text-align:left; }
-  #resultTable tbody tr:nth-child(odd) { background:#fafbfc; }
-
-  #resultTable th.is-active, #resultTable td.is-active { background:#e7f0ff; outline:2px solid #cfe3ff; }
-
-  @media (prefers-color-scheme: dark) {
-    #resultTable { background:#15171a; color:#e9edf1; border-color:#2a2f35; }
-    #resultTable thead { background:#1f2327; color:#e9edf1; }
-    #resultTable th, #resultTable td { border-bottom-color:#2a2f35; }
-    #resultTable tbody tr:nth-child(odd) { background:#181b1f; }
-    #resultTable th.is-active, #resultTable td.is-active { background:#0f274a; outline-color:#214a86; }
+  table#resultTable th, table#resultTable td {
+    padding: 10px 12px !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+    border-bottom: 1px solid #000000 !important;
   }
+  table#resultTable tbody td:first-child { text-align: left !important; font-weight: 600 !important; }
 </style>
-
 </head>
 <body><div class="wrap"><div class="card">
 <main>
@@ -246,7 +176,7 @@ button.primary{background:var(--accent);color:#fff;border:none;font-weight:600}
 </ol>
 </div>
 <button hidden="" id="copyBtn">Copy results to clipboard</button>
-<button hidden="" id="printBtn">Print instructions</button>
+
 </main>
 <!-- ─────────────────────────── DATA (kept inside HTML) -->
 <script id="detergentData" type="application/json">
@@ -435,54 +365,6 @@ window.addEventListener('online',  () => showNetBanner(true));
 window.addEventListener('offline', () => showNetBanner(false));
 if (!navigator.onLine) showNetBanner(false);
 </script>
-<script>
-(async function(){
-  const select = document.getElementById('productSelect');
-  const noteEl = document.getElementById('productNote');
-  if (!select) return;
-  let products = [];
-  try {
-    const res = await fetch('./products.json', { cache: 'no-store' });
-    products = await res.json();
-  } catch(e) {
-    console.warn('Could not load products.json', e);
-    products = [];
-  }
-  select.innerHTML = '<option value="">Select a product…</option>' +
-    products.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
-
-  const saved = localStorage.getItem('xref:selectedProductId');
-  if (saved && products.some(p => p.id === saved)) {
-    select.value = saved;
-    applyProduct(saved);
-  }
-
-  select.addEventListener('change', e => {
-    const id = e.target.value;
-    localStorage.setItem('xref:selectedProductId', id);
-    applyProduct(id);
-  });
-
-  function applyProduct(id){
-    const p = products.find(x => x.id === id);
-    if (!p) {
-      noteEl.style.display = 'none';
-      noteEl.textContent = '';
-      return;
-    }
-    if (p.chlorinated) {
-      noteEl.style.display = 'block';
-      noteEl.textContent = 'Note: This is a chlorinated product. Add 3 drops of Sodium Thiosulphate in Step 2.';
-    } else {
-      noteEl.style.display = 'none';
-      noteEl.textContent = '';
-    }
-    // Optional: auto-select a default concentration if your UI supports it
-    // Example: document.querySelector(`[data-conc="${p.defaultConcentration}"]`)?.click();
-  }
-})();
-</script>
-
 
 <script>
 (function () {
@@ -501,5 +383,59 @@ if (!navigator.onLine) showNetBanner(false);
 })();
 </script>
 
+<script>
+(async function(){
+  const select = document.getElementById('productSelect');
+  const noteEl = document.getElementById('productNote');
+  if (!select) return;
+
+  // Tear down plugins if any
+  try {
+    if (select.choices && select.choices.destroy) select.choices.destroy();
+  } catch(_) {}
+
+  // Load canonical list
+  let products = [];
+  try {
+    const res = await fetch('./products.json', { cache: 'no-store' });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    products = await res.json();
+  } catch (e) {
+    console.warn('products.json failed to load', e);
+  }
+
+  // Full list, no search
+  select.innerHTML = '<option value="">Select a product…</option>' +
+    products.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
+
+  // Restore / change
+  const saved = localStorage.getItem('xref:selectedProductId');
+  if (saved && products.some(p => p.id === saved)) {
+    select.value = saved;
+    applyProduct(saved);
+  }
+  select.addEventListener('change', e => {
+    const id = e.target.value;
+    localStorage.setItem('xref:selectedProductId', id);
+    applyProduct(id);
+  });
+
+  function applyProduct(id){
+    const p = products.find(x => x.id === id);
+    if (!p) { noteEl.style.display='none'; noteEl.textContent=''; return; }
+    if (p.chlorinated) {
+      noteEl.style.display='block';
+      noteEl.textContent='Note: This is a chlorinated product. Add 3 drops of Sodium Thiosulphate in Step 2.';
+    } else {
+      noteEl.style.display='none';
+      noteEl.textContent='';
+    }
+  }
+
+  // Defensive: remove any legacy search handlers
+  const legacyFilter = document.getElementById('productFilter');
+  if (legacyFilter) { legacyFilter.oninput = legacyFilter.onkeyup = null; }
+})();
+</script>
 </body>
 </html>
