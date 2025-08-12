@@ -1,50 +1,129 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Detergent Concentration Tool</title>
-<link rel="manifest" href="manifest.json">
-<style>
-body{font-family:Arial;padding:1rem;background:#f8f9fa;color:#333}
-h1{color:#004085}
-select,button{width:100%;padding:.6rem;margin:.5rem 0}
-table{border-collapse:collapse;width:100%;background:#fff;margin-top:1rem}
-th,td{border:1px solid #dee2e6;padding:.4rem;text-align:center}
-th{background:#e9ecef}
-.chlorinated{background:#fff3cd;border-left:5px solid #ffc107;padding:.5rem;margin-top:1rem}
-.instructions{background:#e2f0d9;border-left:5px solid #28a745;padding:1rem;margin-top:1rem}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Detergent Concentration Tool</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="assets/icon-192.png">
+  <style>
+    :root{--brand:#004085;--accent:#28a745;--muted:#6c757d;--bg:#f8f9fa;}
+    *{box-sizing:border-box} body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:#222}
+    header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:#fff;border-bottom:1px solid #e5e7eb;position:sticky;top:0;z-index:20}
+    .brand{display:flex;gap:12px;align-items:center}
+    .brand img{height:32px}
+    .brand h1{font-size:18px;margin:0;color:var(--brand)}
+    .brand p{margin:0;color:var(--muted);font-size:12px}
+    .actions{display:flex;gap:8px}
+    .chip{padding:6px 10px;border:1px solid var(--brand);background:#fff;border-radius:999px;font-size:12px;cursor:pointer}
+    .chip:hover{background:var(--brand);color:#fff}
+    main{padding:16px;max-width:920px;margin:0 auto}
+    label{display:block;margin:.5rem 0 .25rem}
+    select{width:100%;padding:.6rem;font-size:1rem;margin-bottom:1rem}
+    table{border-collapse:collapse;width:100%;background:#fff}
+    th,td{border:1px solid #dee2e6;padding:.45rem;text-align:center}
+    th{background:#e9ecef}
+    .note{background:#fff3cd;border-left:5px solid #ffc107;padding:.6rem;margin:.5rem 0}
+    footer{margin:12px 16px 24px;color:#555;font-size:12px;text-align:center}
+    /* Modal */
+    .modal{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;padding:16px;z-index:40}
+    .dialog{background:#fff;max-width:700px;width:100%;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.2);overflow:hidden}
+    .dialog header{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1px solid #eee}
+    .dialog .body{padding:12px 14px}
+    .dialog textarea{width:100%;height:300px;font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;font-size:13px;padding:10px;border:1px solid #ddd;border-radius:8px;white-space:pre}
+    .row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+    .row .chip{flex:1}
+  </style>
 </head>
 <body>
-<h1>Detergent Concentration Tool</h1>
-<label for="productSelect"><strong>Select a product:</strong></label>
-<select id="productSelect" size="8"></select>
-<div id="chlorinatedWarning" class="chlorinated" hidden>
-<strong>Note:</strong> This is a chlorinated product. Add 3 drops of Sodium Thiosulphate in Step 2.
-</div>
-<div id="tableWrapper" hidden>
-<table id="resultTable">
-<thead>
-<tr><th>Concentration</th><th>0.5 g/L</th><th>1.0 g/L</th><th>1.5 g/L</th><th>2.0 g/L</th><th>3.0 g/L</th><th>6.0 g/L</th></tr>
-</thead>
-<tbody>
-<tr id="dropRow"><td>Drops</td><td id="c0"></td><td id="c1"></td><td id="c2"></td><td id="c3"></td><td id="c4"></td><td id="c5"></td></tr>
-</tbody>
-</table>
-</div>
-<div class="instructions" id="instructions" hidden>
-<h3>Instructions</h3>
-<ol>
-<li>Fill the test tube to the 5 ml mark with water from the wash tank.</li>
-<li id="chlorineStep" hidden>Add 3 drops of Sodium Thiosulphate.</li>
-<li>Add 1 drop of Indicator Reagent — solution will turn pink.</li>
-<li>Select the correct acid by reference to table 3 (ACID 3 is 4 × strength of ACID 1).</li>
-<li>Add the ACID 1 or 3 a drop at a time, holding dropper bottle vertically. Swirl after each addition.</li>
-<li>Continue until the colour changes from pink to colourless.</li>
-<li>Count number of drops and read product concentration from table 2.</li>
-</ol>
-</div>
-<script src="js/app.js"></script>
+  <header>
+    <div class="brand">
+      <img src="assets/logo.svg" alt="Diversey logo">
+      <div>
+        <h1>Detergent Concentration Tool</h1>
+        <p>Quick drop → g/L with offline support</p>
+      </div>
+    </div>
+    <div class="actions">
+      <button id="aboutBtn" class="chip">About</button>
+      <button id="editBtn" class="chip" style="display:none">Edit Products</button>
+    </div>
+  </header>
+
+  <main>
+    <label for="productSelect"><strong>Select a product:</strong></label>
+    <select id="productSelect" size="8" aria-describedby="chlorinatedWarning"></select>
+
+    <div id="chlorinatedWarning" class="note" hidden>
+      <strong>Note:</strong> Chlorinated product — add 3 drops of Sodium Thiosulphate in Step 2.
+    </div>
+
+    <div style="overflow-x:auto">
+      <table id="resultTable" hidden>
+        <thead>
+          <tr>
+            <th>Concentration</th>
+            <th>0.5 g/L</th><th>1.0 g/L</th><th>1.5 g/L</th>
+            <th>2.0 g/L</th><th>3.0 g/L</th><th>6.0 g/L</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr id="dropRow">
+            <td>Drops</td>
+            <td id="c0"></td><td id="c1"></td><td id="c2"></td>
+            <td id="c3"></td><td id="c4"></td><td id="c5"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="note" id="errorBanner" hidden></div>
+
+    <div class="instructions" id="instructions" hidden style="background:#e2f0d9;border-left:5px solid var(--accent);padding:10px;margin-top:10px">
+      <h3>Instructions</h3>
+      <ol>
+        <li>Fill the test tube to the 5 ml mark with water from the wash tank.</li>
+        <li id="chlorineStep" hidden>Add 3 drops of Sodium Thiosulphate.</li>
+        <li>Add 1 drop of Indicator Reagent — solution will turn pink.</li>
+        <li>Select the correct acid by reference to table 3 (ACID 3 is 4 × strength of ACID 1).</li>
+        <li>Add the ACID 1 or 3 a drop at a time, holding dropper bottle vertically. Swirl after each addition.</li>
+        <li>Continue until the colour changes from pink to colourless.</li>
+        <li>Count number of drops and read product concentration from table 2.</li>
+      </ol>
+    </div>
+  </main>
+
+  <footer id="footerInfo">Offline ready.</footer>
+
+  <!-- About Modal -->
+  <div id="aboutModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="aboutTitle">
+    <div class="dialog">
+      <header>
+        <h2 id="aboutTitle" style="margin:0">About</h2>
+        <button id="closeAbout" class="chip">Close</button>
+      </header>
+      <div class="body" id="aboutContent">Loading…</div>
+    </div>
+  </div>
+
+  <!-- Editor Modal -->
+  <div id="editorModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="editorTitle">
+    <div class="dialog">
+      <header>
+        <h2 id="editorTitle" style="margin:0">Edit products.json</h2>
+        <button id="closeEditor" class="chip">Close</button>
+      </header>
+      <div class="body">
+        <textarea id="productsEditor" spellcheck="false"></textarea>
+        <div class="row">
+          <button id="applyPreview" class="chip">Preview in app</button>
+          <button id="downloadJson" class="chip">Download products.json</button>
+        </div>
+        <p style="margin-top:8px;color:#666;font-size:12px">After downloading the updated file, upload it to your GitHub repo root and commit. The app cache-busts automatically.</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/app.js"></script>
 </body>
 </html>
