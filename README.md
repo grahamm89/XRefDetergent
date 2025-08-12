@@ -1,7 +1,16 @@
-# XRefDetergent (Merged Mobile PWA)
+# XRefDetergent (Mobile-Optimized PWA)
 
-- Mobile-first layout wrapped around your existing calculator UI.
-- Offline via Service Worker (v1.1.0), portrait standalone, safe-area padding.
-- Redirect at repo root to open the tool.
+Mobile-first **Detergent Concentration Tool** with offline support.
 
-**Publish:** enable GitHub Pages from `/docs` on `main`.
+**Live URL** (after enabling Pages from `/docs`):
+`https://grahamm89.github.io/XRefDetergent/`
+
+## Publish
+1. Create repo **XRefDetergent** (public).
+2. Upload this ZIP (keep `/docs` folder).
+3. Settings → Pages:
+   - Source: Deploy from a branch
+   - Branch: `main` / `/docs`
+
+## Update
+- Edit files in `docs/` and bump `CACHE_VERSION` in `docs/service-worker.js` to force updates.
