@@ -1,9 +1,1 @@
-{
-  "name": "Detergent Concentration Tool",
-  "short_name": "Detergent",
-  "start_url": ".",
-  "display": "standalone",
-  "background_color": "#004085",
-  "theme_color": "#004085",
-  "icons": []
-}
+{"name": "Detergent Concentration Tool", "short_name": "Detergent", "start_url": ".", "display": "standalone", "background_color": "#004085", "theme_color": "#004085", "icons": []}
