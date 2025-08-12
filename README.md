@@ -1,7 +1,11 @@
-# XRefDetergent (Merged Mobile PWA)
+# Detergent Concentration Tool (PWA)
+A simple offline-ready detergent drops-to-g/L lookup tool.
 
-- Mobile-first layout wrapped around your existing calculator UI.
-- Offline via Service Worker (v1.1.0), portrait standalone, safe-area padding.
-- Redirect at repo root to open the tool.
+## Deploy to GitHub Pages
+1. Create a **public** GitHub repo.
+2. Upload all files from this folder.
+3. Go to Settings → Pages → Deploy from **main / root**.
+4. Wait for your live link to appear.
 
-**Publish:** enable GitHub Pages from `/docs` on `main`.
+## Update
+Commit changes and GitHub Pages will redeploy.
