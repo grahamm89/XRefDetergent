@@ -13,7 +13,7 @@ It includes a protected admin page for updating the product list without any cod
 - **Admin Editor** – Easily update products via a browser form (password protected).
 - **Automatic Updates** – Changes are instantly available to all users.
 
-## Installation (Optional - as an App)
+## Installation (Recommended/Essential For Content Updates - as an App)
 1. Open the app in your browser.
 2. If prompted, select **"Install"** or **"Add to Home Screen"**.
 3. Once installed, you can launch it like a normal app, even offline.
