@@ -1,13 +1,17 @@
-name: Deploy to GitHub Pages
+name: Deploy PWA to Pages
 
 on:
   push:
-    branches: ["main"]  # Change if your default branch is not main
+    branches: ["main"]
 
 permissions:
   contents: read
   pages: write
   id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
 
 jobs:
   deploy:
@@ -15,15 +19,14 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./  # Path to your built/static site files
+          path: './'
 
       - name: Deploy to GitHub Pages
         id: deployment
