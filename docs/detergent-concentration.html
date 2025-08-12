@@ -101,9 +101,6 @@ button.primary{background:var(--accent);color:#fff;border:none;font-weight:600}
 @media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
 :focus-visible{outline:3px solid rgba(10,132,255,.4);outline-offset:2px;border-radius:10px}
 </style>
-
-
-
 <style id="strict-white-table">
   /* Show dropdown on all devices */
   #productSelectWrap, #productSelect { display:block !important; visibility:visible !important; }
@@ -137,7 +134,7 @@ button.primary{background:var(--accent);color:#fff;border:none;font-weight:600}
 <main>
 <h1>Detergent Concentration Tool</h1>
 <label for="filterInput"><strong>Type to filter products:</strong></label>
-<input aria-label="Filter products" autocomplete="off" id="filterInput" placeholder="Start typing… e.g. Suma" type="search"/>
+
 <label for="productSelect"><strong>Select a product:</strong></label>
 <select aria-describedby="chlorinatedWarning" id="productSelect" size="8"></select>
 <div class="chlorinated p-2" hidden="" id="chlorinatedWarning" role="alert">
@@ -176,7 +173,6 @@ button.primary{background:var(--accent);color:#fff;border:none;font-weight:600}
 </ol>
 </div>
 <button hidden="" id="copyBtn">Copy results to clipboard</button>
-
 </main>
 <!-- ─────────────────────────── DATA (kept inside HTML) -->
 <script id="detergentData" type="application/json">
@@ -250,7 +246,7 @@ button.primary{background:var(--accent);color:#fff;border:none;font-weight:600}
   }
 
   /* Filter logic */
-  filterInput.addEventListener('input',()=>{
+  if(filterInput){filterInput.addEventListener('input',()=>{
     const term=filterInput.value.trim().toLowerCase();
     const filtered = data.filter(d=>d.name.toLowerCase().includes(term));
     populateSelect(filtered);
@@ -276,7 +272,7 @@ button.primary{background:var(--accent);color:#fff;border:none;font-weight:600}
     // UI toggles
     tableEl.classList.add('fade-in');
     setTimeout(()=>tableEl.classList.remove('fade-in'),400); // reset
-    [tableEl,instrEl,dropsInput,dropsLabel,copyBtn,printBtn].forEach(el=>setHidden(el,false));
+    [tableEl,instrEl,dropsInput,dropsLabel,copyBtn,printBtn].filter(Boolean).forEach(el=>setHidden(el,false));
 
     const isChlor = e.target.selectedOptions[0].dataset.chlorinated==='true';
     setHidden(warningEl,!isChlor);
@@ -365,7 +361,6 @@ window.addEventListener('online',  () => showNetBanner(true));
 window.addEventListener('offline', () => showNetBanner(false));
 if (!navigator.onLine) showNetBanner(false);
 </script>
-
 <script>
 (function () {
   if (!('serviceWorker' in navigator)) {
@@ -383,59 +378,5 @@ if (!navigator.onLine) showNetBanner(false);
 })();
 </script>
 
-<script>
-(async function(){
-  const select = document.getElementById('productSelect');
-  const noteEl = document.getElementById('productNote');
-  if (!select) return;
-
-  // Tear down plugins if any
-  try {
-    if (select.choices && select.choices.destroy) select.choices.destroy();
-  } catch(_) {}
-
-  // Load canonical list
-  let products = [];
-  try {
-    const res = await fetch('./products.json', { cache: 'no-store' });
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    products = await res.json();
-  } catch (e) {
-    console.warn('products.json failed to load', e);
-  }
-
-  // Full list, no search
-  select.innerHTML = '<option value="">Select a product…</option>' +
-    products.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
-
-  // Restore / change
-  const saved = localStorage.getItem('xref:selectedProductId');
-  if (saved && products.some(p => p.id === saved)) {
-    select.value = saved;
-    applyProduct(saved);
-  }
-  select.addEventListener('change', e => {
-    const id = e.target.value;
-    localStorage.setItem('xref:selectedProductId', id);
-    applyProduct(id);
-  });
-
-  function applyProduct(id){
-    const p = products.find(x => x.id === id);
-    if (!p) { noteEl.style.display='none'; noteEl.textContent=''; return; }
-    if (p.chlorinated) {
-      noteEl.style.display='block';
-      noteEl.textContent='Note: This is a chlorinated product. Add 3 drops of Sodium Thiosulphate in Step 2.';
-    } else {
-      noteEl.style.display='none';
-      noteEl.textContent='';
-    }
-  }
-
-  // Defensive: remove any legacy search handlers
-  const legacyFilter = document.getElementById('productFilter');
-  if (legacyFilter) { legacyFilter.oninput = legacyFilter.onkeyup = null; }
-})();
-</script>
-</body>
+<button id="printBtn" style="display:none">Print</button></body>
 </html>
