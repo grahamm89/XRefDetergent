@@ -56,12 +56,12 @@
     if(!val){return;}
     [...tableEl.querySelectorAll('td')].forEach(td=>td.classList.remove('selected'));
     [...tableEl.querySelectorAll('#dropRow td:not(:first-child)')].forEach(td=>{
-      if(parseInts(td.textContent).includes(val)) td.classList.add('selected');
+      if (parseInts(td.textContent).includes(val)) td.classList.add('selected');
     });
   });
 
   copyBtn.addEventListener('click',()=>{
-    const product=selectEl.value;
+    const product=selectEl.value || '';
     const vals=[...tableEl.querySelectorAll('#dropRow td')].slice(1).map(td=>td.innerText).join('\t');
     navigator.clipboard.writeText(`${product}\t${vals}`);
   });
@@ -69,6 +69,16 @@
   printBtn.addEventListener('click',()=>window.print());
 
   if('serviceWorker' in navigator){
-    window.addEventListener('load',()=>navigator.serviceWorker.register('service-worker.js'));
+    window.addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js'));
+  }
+})();
+
+// ---- Version footer ----
+(function() {
+  var v = 'detergent-tool-v1.0.1';
+  var el = document.getElementById('versionFooter');
+  if (el) {
+    var stamp = new Date().toLocaleString();
+    el.textContent = 'Version: ' + v + ' • Updated: ' + stamp;
   }
 })();

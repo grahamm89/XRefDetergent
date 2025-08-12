@@ -1,75 +1,80 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Detergent Concentration Tool</title>
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<link rel="manifest" href="manifest.json">
-<link rel="icon" href="assets/icon-192.png">
-<style>
-body{font-family:Arial,Helvetica,sans-serif;margin:0;padding:1rem;background:#f8f9fa;color:#333}
-h1{color:#004085;margin-bottom:.5rem}
-label{display:block;margin:.5rem 0 .25rem}
-input,select,button{width:100%;padding:.6rem;font-size:1rem;margin-bottom:1rem}
-button{cursor:pointer;border:1px solid #004085;background:#fff}
-button:hover{background:#004085;color:#fff}
-.table-scroll{overflow-x:auto}
-table{border-collapse:collapse;width:100%;background:#fff}
-th,td{border:1px solid #dee2e6;padding:.4rem;text-align:center}
-th{background:#e9ecef}
-.selected{background:#28a745;color:#fff}
-.fade-in{animation:fade .4s}
-@keyframes fade{from{opacity:0}to{opacity:1}}
-.chlorinated{background:#fff3cd;border-left:5px solid #ffc107;margin-bottom:1rem}
-.instructions{background:#e2f0d9;border-left:5px solid #28a745;margin-top:1rem}
-.instructions ol{padding-left:1.25rem}
-.instructions li{margin:.4rem 0}
-@media print{#filterInput,#productSelect,#copyBtn,#printBtn{display:none}body{padding:0;background:#fff}}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Detergent Concentration Tool</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="assets/icon-192.png">
+  <style>
+    body{font-family:Arial,Helvetica,sans-serif;margin:0;padding:24px;background:#f8f9fa;color:#222}
+    h1{color:#004085;margin:0 0 12px}
+    label{display:block;margin:.5rem 0 .25rem}
+    input,select,button{width:100%;padding:.6rem;font-size:1rem;margin-bottom:1rem}
+    table{border-collapse:collapse;width:100%;background:#fff}
+    th,td{border:1px solid #dee2e6;padding:.4rem;text-align:center}
+    th{background:#e9ecef}
+    .warn{background:#fff3cd;border-left:5px solid #ffc107;padding:.6rem;margin:.5rem 0}
+  </style>
 </head>
 <body>
-<main>
   <h1>Detergent Concentration Tool</h1>
+
   <label for="filterInput"><strong>Type to filter products:</strong></label>
   <input id="filterInput" type="search" placeholder="Start typing… e.g. Suma">
+
   <label for="productSelect"><strong>Select a product:</strong></label>
   <select id="productSelect" size="8"></select>
-  <div id="chlorinatedWarning" class="chlorinated" hidden>
-    <strong>Note:</strong> This is a chlorinated product. Add 3 drops of Sodium Thiosulphate in Step 2.
+
+  <div id="chlorinatedWarning" class="warn" hidden>
+    <strong>Note:</strong> Chlorinated product – add 3 drops Sodium Thiosulphate in Step 2.
   </div>
-  <div class="table-scroll">
+
+  <div style="overflow-x:auto">
     <table id="resultTable" hidden>
       <thead>
         <tr>
-          <th>Concentration</th><th>0.5 g/L</th><th>1.0 g/L</th><th>1.5 g/L</th>
+          <th>Concentration</th>
+          <th>0.5 g/L</th><th>1.0 g/L</th><th>1.5 g/L</th>
           <th>2.0 g/L</th><th>3.0 g/L</th><th>6.0 g/L</th>
         </tr>
       </thead>
       <tbody>
         <tr id="dropRow">
-          <td>Drops</td><td id="c0"></td><td id="c1"></td><td id="c2"></td>
+          <td>Drops</td>
+          <td id="c0"></td><td id="c1"></td><td id="c2"></td>
           <td id="c3"></td><td id="c4"></td><td id="c5"></td>
         </tr>
       </tbody>
     </table>
   </div>
+
   <label for="dropsInput" hidden id="dropsLabel"><strong>Reverse lookup – enter drop count:</strong></label>
   <input type="number" id="dropsInput" min="1" placeholder="e.g. 7" hidden>
-  <div class="instructions" id="instructions" hidden>
+
+  <div id="instructions" hidden>
     <h3>Instructions</h3>
     <ol>
       <li>Fill the test tube to the 5 ml mark with water from the wash tank.</li>
       <li id="chlorineStep" hidden>Add 3 drops of Sodium Thiosulphate.</li>
-      <li>Add 1 drop of Indicator Reagent — solution will turn pink.</li>
-      <li>Select the correct acid by reference to table 3.</li>
-      <li>Add the acid drop by drop, swirling after each addition.</li>
-      <li>Continue until the colour changes from pink to colourless.</li>
-      <li>Count drops and read concentration from table 2.</li>
+      <li>Add 1 drop of Indicator Reagent — solution turns pink.</li>
+      <li>Select the correct acid (ACID 3 is 4× ACID 1).</li>
+      <li>Add acid drop by drop, swirl each time.</li>
+      <li>Stop when colour turns colourless.</li>
+      <li>Count drops → read table.</li>
     </ol>
   </div>
+
   <button id="copyBtn" hidden>Copy results</button>
-  <button id="printBtn" hidden>Print instructions</button>
-</main>
-<script src="app.js"></script>
+  <button id="printBtn" hidden>Print</button>
+
+  <script src="app.js"></script>
+
+<footer id='versionFooter' style="text-align:center;margin-top:20px;color:#666;font-size:0.9rem;">
+  Offline ready. Updated: 2025-08-12 03:45:34 — v1.0.2
+</footer>
+
+
+  <footer id="versionFooter" style="margin-top:16px;color:#555;font-size:12px;"></footer>
 </body>
 </html>
